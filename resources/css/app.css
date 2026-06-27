@@ -1,9 +1,236 @@
-@import 'tailwindcss';
+/* ── Google Fonts ─────────────────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../storage/framework/views/*.php';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-@theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+/* ── Gutta Design System ── */
+:root {
+  --color-gutta-black: #000000;
+  --color-gutta-purple: #6d28d9;
+  --color-gutta-dark: #4c1d95;
+  --color-gutta-light: #ede9fe;
+  --color-gutta-white: #ffffff;
+  --color-gutta-gray: #111111;
+  --color-gutta-border: #1f1f1f;
+
+  --font-sans: 'Inter', 'Space Grotesk', sans-serif;
+  --font-display: 'Space Grotesk', 'Inter', sans-serif;
+}
+
+/* ── Base Styles ──────────────────────────────────────────────────────────── */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-black text-white font-sans antialiased;
+  }
+
+  * {
+    @apply box-border;
+  }
+
+  ::selection {
+    @apply bg-violet-700 text-white;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-black;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-violet-700 rounded-none;
+  }
+}
+
+/* ── Component Utilities ──────────────────────────────────────────────────── */
+@layer components {
+
+  /* Buttons */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2
+           bg-violet-700 hover:bg-black
+           text-white font-bold tracking-wider uppercase
+           rounded-none border-2 border-violet-700 hover:border-white
+           px-6 py-3 text-sm
+           transition-all duration-150 ease-out
+           cursor-pointer select-none;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2
+           bg-transparent hover:bg-white
+           text-white hover:text-black
+           font-bold tracking-wider uppercase
+           rounded-none border-2 border-white
+           px-6 py-3 text-sm
+           transition-all duration-150 ease-out
+           cursor-pointer select-none;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2
+           bg-transparent hover:bg-white/10
+           text-white/70 hover:text-white
+           font-medium
+           rounded-none border border-white/20
+           px-4 py-2 text-sm
+           transition-all duration-150;
+  }
+
+  .btn-danger {
+    @apply inline-flex items-center justify-center gap-2
+           bg-transparent hover:bg-red-600
+           text-red-400 hover:text-white
+           font-medium rounded-none border border-red-600
+           px-4 py-2 text-sm
+           transition-all duration-150;
+  }
+
+  /* Cards */
+  .card-product {
+    @apply border-2 border-white/10 hover:border-violet-600
+           bg-zinc-950 group cursor-pointer overflow-hidden
+           transition-all duration-150;
+  }
+
+  .card-gutta {
+    @apply border-2 border-white/10 bg-zinc-950 p-6;
+  }
+
+  /* Form inputs */
+  .input-gutta {
+    @apply w-full bg-zinc-900 border-2 border-zinc-700
+           focus:border-violet-600 focus:outline-none
+           text-white placeholder-zinc-500
+           rounded-none px-4 py-3 text-sm
+           transition-colors duration-150;
+  }
+
+  .label-gutta {
+    @apply block text-xs font-bold uppercase tracking-wider text-zinc-400 mb-2;
+  }
+
+  .select-gutta {
+    @apply w-full bg-zinc-900 border-2 border-zinc-700
+           focus:border-violet-600 focus:outline-none
+           text-white rounded-none px-4 py-3 text-sm
+           transition-colors duration-150;
+  }
+
+  /* Section headers */
+  .section-title {
+    @apply text-4xl font-black uppercase tracking-tight font-display;
+  }
+
+  .section-subtitle {
+    @apply text-zinc-400 text-sm uppercase tracking-widest;
+  }
+
+  /* Nav link */
+  .nav-link {
+    @apply text-sm font-bold uppercase tracking-wider text-zinc-300
+           hover:text-white
+           relative after:absolute after:bottom-0 after:left-0
+           after:w-0 after:h-0.5 after:bg-violet-600
+           hover:after:w-full after:transition-all after:duration-200;
+  }
+
+  /* Status badges */
+  .badge-pending  { @apply inline-flex items-center px-3 py-1 text-xs font-bold uppercase tracking-wider bg-yellow-400 text-black; }
+  .badge-paid     { @apply inline-flex items-center px-3 py-1 text-xs font-bold uppercase tracking-wider bg-blue-500 text-white; }
+  .badge-processing { @apply inline-flex items-center px-3 py-1 text-xs font-bold uppercase tracking-wider bg-indigo-500 text-white; }
+  .badge-shipped  { @apply inline-flex items-center px-3 py-1 text-xs font-bold uppercase tracking-wider bg-cyan-500 text-white; }
+  .badge-completed { @apply inline-flex items-center px-3 py-1 text-xs font-bold uppercase tracking-wider bg-green-500 text-white; }
+  .badge-cancelled { @apply inline-flex items-center px-3 py-1 text-xs font-bold uppercase tracking-wider bg-red-500 text-white; }
+
+  /* Size button */
+  .size-btn {
+    @apply w-12 h-12 border-2 border-zinc-700
+           flex items-center justify-center
+           text-sm font-bold uppercase
+           transition-all duration-150 cursor-pointer
+           hover:border-white;
+  }
+
+  .size-btn-selected {
+    @apply border-violet-600 bg-violet-600 text-white;
+  }
+
+  .size-btn-disabled {
+    @apply border-zinc-800 text-zinc-600 cursor-not-allowed
+           line-through;
+  }
+
+  /* Grid overlay for brutalist look */
+  .gutta-grid {
+    background-image:
+      linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  /* Divider */
+  .divider-gutta {
+    @apply border-t-2 border-white/10;
+  }
+
+  /* Table */
+  .table-gutta {
+    @apply w-full text-sm;
+  }
+
+  .table-gutta thead tr {
+    @apply border-b-2 border-white/10;
+  }
+
+  .table-gutta thead th {
+    @apply text-left text-xs font-bold uppercase tracking-widest
+           text-zinc-400 py-4 px-4;
+  }
+
+  .table-gutta tbody tr {
+    @apply border-b border-white/5 hover:bg-white/5 transition-colors;
+  }
+
+  .table-gutta tbody td {
+    @apply py-4 px-4 text-zinc-300;
+  }
+}
+
+/* ── Animations ───────────────────────────────────────────────────────────── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shimmer {
+  from { background-position: -200% 0; }
+  to   { background-position: 200% 0; }
+}
+
+@keyframes pulse-gutta {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.3s ease-out forwards;
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    #1a1a1a 25%,
+    #252525 50%,
+    #1a1a1a 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
 }

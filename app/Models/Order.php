@@ -116,7 +116,7 @@ class Order extends Model
 
         return match(strtolower($this->courier)) {
             'jne'     => "https://www.jne.co.id/id/tracking/trace?awb={$this->tracking_number}",
-            'jnt'     => "https://jet.id/#tracking",
+            'jnt'     => "https://www.jet.co.id/track",
             'sicepat' => "https://www.sicepat.com/checkAwb/{$this->tracking_number}",
             'pos'     => "https://www.posindonesia.co.id/en/tracking?barcode={$this->tracking_number}",
             default   => null,

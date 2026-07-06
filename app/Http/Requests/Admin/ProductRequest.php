@@ -11,6 +11,14 @@ class ProductRequest extends FormRequest
         return $this->user()?->isAdmin() ?? false;
     }
 
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'name'        => $this->name ? strip_tags($this->name) : null,
+            'description' => $this->description ? strip_tags($this->description) : null,
+        ]);
+    }
+
     public function rules(): array
     {
         return [

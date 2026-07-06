@@ -76,6 +76,14 @@ class AddressBook extends Component
 
     public function saveAddress(): void
     {
+        // Sanitasi input string sebelum validasi untuk mencegah XSS
+        $this->label          = strip_tags($this->label);
+        $this->recipient_name = strip_tags($this->recipient_name);
+        $this->phone          = strip_tags($this->phone);
+        $this->district       = strip_tags($this->district);
+        $this->postal_code    = strip_tags($this->postal_code);
+        $this->full_address   = strip_tags($this->full_address);
+
         $this->validate([
             'label'          => 'required|string|max:50',
             'recipient_name' => 'required|string|max:100',

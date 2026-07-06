@@ -70,7 +70,7 @@ new #[Layout('layouts.guest')] class extends Component
         <!-- WhatsApp -->
         <div>
             <x-input-label for="whatsapp" value="Nomor WhatsApp" />
-            <x-text-input wire:model="whatsapp" id="whatsapp" class="block w-full" type="text" name="whatsapp" required placeholder="081234567890" />
+            <x-text-input wire:model="whatsapp" id="whatsapp" class="block w-full" type="text" inputmode="numeric" pattern="[0-9]*" name="whatsapp" required placeholder="081234567890" x-data x-on:input="$el.value = $el.value.replace(/[^0-9]/g, '')" />
             <p class="text-[10px] text-zinc-500 mt-1">Gunakan format angka saja (contoh: 081234567890 atau 6281234567890).</p>
             <x-input-error :messages="$errors->get('whatsapp')" class="mt-1" />
         </div>

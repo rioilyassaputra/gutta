@@ -59,7 +59,7 @@
                                     </span>
                                 </td>
                                 <td class="py-3 text-right">
-                                    <a href="{{ route('admin.orders.show', $order->id) }}" class="text-violet-400 hover:text-white transition-colors font-bold uppercase tracking-wider">
+                                    <a href="{{ route('admin.orders.show', $order) }}" class="text-violet-400 hover:text-white transition-colors font-bold uppercase tracking-wider">
                                         Detail
                                     </a>
                                 </td>

@@ -1,0 +1,22 @@
+# Apache fallback configuration for Gutta
+# Protects sensitive files and folders from public access if document root is misconfigured to the project root instead of /public.
+
+<IfModule mod_rewrite.c>
+    RewriteEngine on
+    
+    # Block direct access to sensitive files
+    RedirectMatch 403 (?i)\.(env|git|log|yml|yaml|json|lock|cache)$
+    
+    # Redirect traffic to public directory
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+
+# Block directory listings
+Options -Indexes
+
+# Deny access to .env and git folders explicitly
+<FilesMatch "^\.env">
+    Order allow,deny
+    Deny from all
+</FilesMatch>

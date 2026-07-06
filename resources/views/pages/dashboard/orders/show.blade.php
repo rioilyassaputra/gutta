@@ -121,7 +121,7 @@
             <script>
                 document.getElementById('pay-button')?.addEventListener('click', function() {
                     if (typeof snap !== 'undefined') {
-                        snap.pay('{{ $order->payment_token }}', {
+                        snap.pay('{{ explode('|', $order->payment_token)[0] }}', {
                             onSuccess: function(result) {
                                 window.location.reload();
                             },

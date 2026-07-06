@@ -80,7 +80,7 @@
                             <p class="text-zinc-500 text-xs uppercase">{{ $order->courier_service }}</p>
                         </td>
                         <td class="p-4 text-right">
-                            <a href="{{ route('admin.orders.show', $order->id) }}" class="btn-ghost py-1 px-3 text-xs">
+                            <a href="{{ route('admin.orders.show', $order) }}" class="btn-ghost py-1 px-3 text-xs">
                                 Detail
                             </a>
                         </td>

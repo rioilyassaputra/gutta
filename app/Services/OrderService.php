@@ -13,7 +13,8 @@ use Illuminate\Support\Facades\DB;
 class OrderService
 {
     public function __construct(
-        private readonly CartService $cartService
+        private readonly CartService $cartService,
+        private readonly RajaOngkirService $rajaOngkirService
     ) {}
 
     /**
@@ -66,18 +67,50 @@ class OrderService
                 $variant->decrement('stock', $item->qty);
             }
 
-            $shippingCost = (float) ($checkoutData['shipping_cost'] ?? 0);
+            // 3.5. Re-calculate and validate shipping cost from RajaOngkir Service (Anti-Tampering)
+            $totalWeight = $this->cartService->getTotalWeight($cartItems);
+            $addressSnapshot = $checkoutData['address_snapshot'] ?? null;
+            if (!$addressSnapshot || !isset($addressSnapshot['city_id'])) {
+                throw new \RuntimeException('Alamat pengiriman tidak valid.');
+            }
+            $destinationCityId = (int) $addressSnapshot['city_id'];
+
+            $courier = $checkoutData['courier'] ?? null;
+            $courierServiceName = $checkoutData['courier_service'] ?? null;
+
+            if (!$courier || !$courierServiceName) {
+                throw new \RuntimeException('Kurir dan layanan pengiriman wajib dipilih.');
+            }
+
+            // Dapatkan opsi ongkir dari server-side RajaOngkirService
+            $shippingOptions = $this->rajaOngkirService->getCost($destinationCityId, max($totalWeight, 1));
+            
+            // Cari opsi ongkir yang dipilih user
+            $matchedOption = null;
+            foreach ($shippingOptions as $option) {
+                if (strtolower($option['courier']) === strtolower($courier) &&
+                    strtolower($option['service']) === strtolower($courierServiceName)) {
+                    $matchedOption = $option;
+                    break;
+                }
+            }
+
+            if (!$matchedOption) {
+                throw new \RuntimeException("Metode pengiriman {$courier} - {$courierServiceName} tidak tersedia.");
+            }
+
+            $shippingCost = (float) $matchedOption['cost'];
             $total        = $subtotal + $shippingCost;
 
             // 4. Create order
             $order = Order::create([
                 'user_id'          => $user->id,
-                'address_snapshot' => $checkoutData['address_snapshot'],
+                'address_snapshot' => $addressSnapshot,
                 'subtotal'         => $subtotal,
                 'shipping_cost'    => $shippingCost,
                 'total'            => $total,
-                'courier'          => $checkoutData['courier'],
-                'courier_service'  => $checkoutData['courier_service'],
+                'courier'          => $courier,
+                'courier_service'  => $courierServiceName,
                 'status'           => 'pending_payment',
             ]);
 
@@ -131,17 +164,24 @@ class OrderService
     public function cancelOrder(Order $order): void
     {
         DB::transaction(function () use ($order) {
-            if (in_array($order->status, ['paid', 'processing', 'shipped', 'completed'])) {
+            // Lock the order row to prevent concurrency
+            $lockedOrder = Order::where('id', $order->id)->lockForUpdate()->firstOrFail();
+
+            if (in_array($lockedOrder->status, ['paid', 'processing', 'shipped', 'completed'])) {
                 throw new \RuntimeException('Pesanan tidak dapat dibatalkan.');
             }
 
-            // Restore stock
-            foreach ($order->items as $item) {
-                ProductVariant::where('id', $item->product_variant_id)
-                    ->increment('stock', $item->qty);
+            // Restore stock with row lock
+            foreach ($lockedOrder->items as $item) {
+                $variant = ProductVariant::where('id', $item->product_variant_id)
+                    ->lockForUpdate()
+                    ->first();
+                if ($variant) {
+                    $variant->increment('stock', $item->qty);
+                }
             }
 
-            $order->update(['status' => 'cancelled']);
+            $lockedOrder->update(['status' => 'cancelled']);
         });
     }
 }

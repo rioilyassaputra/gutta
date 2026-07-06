@@ -23,10 +23,11 @@ class MidtransPaymentService implements PaymentServiceInterface
     public function createTransaction(Order $order): array
     {
         $address = $order->address_snapshot;
+        $uniqueOrderId = $order->order_number . '-' . time();
 
         $params = [
             'transaction_details' => [
-                'order_id'     => $order->order_number,
+                'order_id'     => $uniqueOrderId,
                 'gross_amount' => (int) $order->total,
             ],
             'customer_details' => [
@@ -55,10 +56,28 @@ class MidtransPaymentService implements PaymentServiceInterface
 
         try {
             $snapToken = Snap::getSnapToken($params);
-            return ['success' => true, 'snap_token' => $snapToken];
+            return [
+                'success'         => true,
+                'snap_token'      => $snapToken,
+                'unique_order_id' => $uniqueOrderId,
+            ];
         } catch (\Exception $e) {
             Log::error('Midtrans createTransaction error: ' . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
+        }
+    }
+
+    /**
+     * Get transaction status from Midtrans API.
+     */
+    public function getTransactionStatus(string $orderId): ?string
+    {
+        try {
+            $status = \Midtrans\Transaction::status($orderId);
+            return $status->transaction_status ?? null;
+        } catch (\Exception $e) {
+            Log::error("Midtrans getTransactionStatus error for Order {$orderId}: " . $e->getMessage());
+            return null;
         }
     }
 

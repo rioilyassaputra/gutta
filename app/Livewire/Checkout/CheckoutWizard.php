@@ -96,7 +96,6 @@ class CheckoutWizard extends Component
         try {
             $order = $orderService->createFromCheckout(auth()->user(), [
                 'address_snapshot' => $address->toSnapshot(),
-                'shipping_cost'    => $this->selectedShippingCost,
                 'courier'          => $this->selectedCourier,
                 'courier_service'  => $this->selectedCourierService,
             ]);
@@ -105,7 +104,7 @@ class CheckoutWizard extends Component
 
             if ($result['success']) {
                 $this->snapToken = $result['snap_token'];
-                $order->update(['payment_token' => $this->snapToken]);
+                $order->update(['payment_token' => $this->snapToken . '|' . $result['unique_order_id']]);
                 $this->dispatch('open-snap', token: $this->snapToken, orderId: $order->order_number);
             } else {
                 $this->dispatch('notify', message: 'Gagal membuat transaksi pembayaran. Coba lagi.', type: 'error');

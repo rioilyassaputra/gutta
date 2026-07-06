@@ -1,12 +1,12 @@
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12" x-data="{ showConfirmModal: false }">
     <div class="flex items-center justify-between mb-10">
         <div>
             <p class="section-subtitle mb-1 text-violet-400">Your</p>
             <h1 class="section-title text-4xl">KERANJANG</h1>
         </div>
         @if($cartItems->isNotEmpty())
-            <button wire:click="clearCart"
-                    wire:confirm="Hapus semua item dari keranjang?"
+            <button type="button"
+                    @click="showConfirmModal = true"
                     class="btn-danger text-xs">
                 Kosongkan Keranjang
             </button>
@@ -133,4 +133,46 @@
             </div>
         </div>
     @endif
+
+    {{-- Custom Confirmation Modal --}}
+    <div x-show="showConfirmModal" 
+         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+         x-cloak
+         x-transition:enter="ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0">
+        
+        <div class="w-full max-w-md bg-zinc-950 border-2 border-white/10 p-6 sm:p-8 space-y-6 text-center transform transition-all"
+             @click.outside="showConfirmModal = false"
+             x-transition:enter="ease-out duration-300"
+             x-transition:enter-start="opacity-0 scale-95"
+             x-transition:enter-end="opacity-100 scale-100"
+             x-transition:leave="ease-in duration-200"
+             x-transition:leave-start="opacity-100 scale-100"
+             x-transition:leave-end="opacity-0 scale-95">
+            
+            <div class="w-16 h-16 bg-red-950/30 border-2 border-red-500 text-red-500 rounded-none flex items-center justify-center mx-auto text-2xl font-bold">
+                ⚠️
+            </div>
+            
+            <div class="space-y-2">
+                <h3 class="text-lg font-black uppercase tracking-wider text-white">Kosongkan Keranjang?</h3>
+                <p class="text-zinc-400 text-sm">Semua produk yang ada di dalam keranjang belanja Anda akan dihapus secara permanen.</p>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4 pt-2">
+                <button @click="showConfirmModal = false" 
+                        class="bg-transparent hover:bg-white/5 text-zinc-400 hover:text-white font-bold rounded-none border-2 border-white/10 px-6 py-3 transition-colors text-xs uppercase tracking-wider">
+                    Batal
+                </button>
+                <button @click="showConfirmModal = false; $wire.clearCart()" 
+                        class="bg-red-600 hover:bg-red-700 text-white font-bold rounded-none border-2 border-red-600 px-6 py-3 transition-colors text-xs uppercase tracking-wider">
+                    Ya, Hapus Semua
+                </button>
+            </div>
+        </div>
+    </div>
 </div>

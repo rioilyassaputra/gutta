@@ -35,7 +35,7 @@
                 {{-- No. WhatsApp/Telepon --}}
                 <div>
                     <label class="block text-xs font-black uppercase tracking-widest text-zinc-400 mb-2">No. Telepon / WhatsApp</label>
-                    <input type="text" wire:model="phone" class="w-full bg-black border-2 border-white/10 focus:border-violet-600 text-white rounded-none py-2 px-3 text-sm focus:outline-none transition-colors" placeholder="62812xxxxxx">
+                    <input type="text" wire:model="phone" class="w-full bg-black border-2 border-white/10 focus:border-violet-600 text-white rounded-none py-2 px-3 text-sm focus:outline-none transition-colors" placeholder="62812xxxxxx" inputmode="numeric" pattern="[0-9]*" x-data x-on:input="$el.value = $el.value.replace(/[^0-9]/g, '')">
                     @error('phone') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                 </div>
 

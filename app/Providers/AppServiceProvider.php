@@ -3,6 +3,9 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Http\Request;
 
 use App\Models\Order;
 use App\Observers\OrderObserver;
@@ -32,6 +35,15 @@ class AppServiceProvider extends ServiceProvider
             } else {
                 $view->with('globalCategories', collect());
             }
+        });
+
+        // Register rate limiters for sensitive endpoints (Brute Force & DoS prevention)
+        RateLimiter::for('sensitive-auth', function (Request $request) {
+            return Limit::perMinute(5)->by($request->ip());
+        });
+
+        RateLimiter::for('promo-code', function (Request $request) {
+            return Limit::perMinute(5)->by($request->ip());
         });
     }
 }

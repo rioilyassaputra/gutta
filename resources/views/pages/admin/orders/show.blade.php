@@ -22,7 +22,7 @@
             <div class="flex gap-2 self-start sm:self-center">
                 {{-- If paid, show mark as processing --}}
                 @if($order->status === 'paid')
-                    <form method="POST" action="{{ route('admin.orders.update', $order->id) }}">
+                    <form method="POST" action="{{ route('admin.orders.update', $order) }}">
                         @csrf
                         @method('PATCH')
                         <button type="submit" class="btn-primary py-2.5 px-6 text-xs">
@@ -65,7 +65,7 @@
                 @if($order->status === 'processing')
                     <div class="border-2 border-white/10 bg-zinc-950 p-6 space-y-4">
                         <h3 class="text-base font-black uppercase tracking-wider text-white border-b border-white/10 pb-3">Kirim Pesanan (Input Nomor Resi)</h3>
-                        <form method="POST" action="{{ route('admin.orders.tracking', $order->id) }}" class="space-y-4">
+                        <form method="POST" action="{{ route('admin.orders.tracking', $order) }}" class="space-y-4">
                             @csrf
                             <div>
                                 <label class="block text-xs font-black uppercase tracking-widest text-zinc-400 mb-2">Nomor Resi / AWB</label>

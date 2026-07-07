@@ -12,9 +12,8 @@
     <link rel="icon" href="{{ asset('images/logo.png') }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
-    {{-- Midtrans Snap --}}
-    <script src="{{ config('midtrans.snap_url') }}" data-client-key="{{ config('midtrans.client_key') }}"></script>
 </head>
+
 <body class="bg-black text-white min-h-screen flex flex-col gutta-grid">
 
     {{-- ── HEADER ────────────────────────────────────────────────── --}}

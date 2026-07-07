@@ -25,8 +25,22 @@ class OrderTable extends Component
     public function updatingSearch(): void { $this->resetPage(); }
     public function updatingStatusFilter(): void { $this->resetPage(); }
 
-    public function render()
-    {
+    public function render(
+        \App\Services\PaymentServiceInterface $paymentService,
+        \App\Services\OrderService $orderService
+    ) {
+        // Auto-check pending payment status from gateway for active orders
+        $pendingOrders = Order::where('status', 'pending_payment')->take(10)->get();
+
+        foreach ($pendingOrders as $pendingOrder) {
+            if (method_exists($paymentService, 'getTransactionStatus')) {
+                $status = $paymentService->getTransactionStatus($pendingOrder);
+                if (in_array(strtolower($status ?? ''), ['completed', 'paid', 'settlement', 'success'])) {
+                    $orderService->markAsPaid($pendingOrder);
+                }
+            }
+        }
+
         $query = Order::with(['user', 'items'])
             ->latest();
 

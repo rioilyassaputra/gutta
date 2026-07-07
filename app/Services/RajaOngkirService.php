@@ -67,6 +67,27 @@ class RajaOngkirService
                     }
                 }
 
+                // Filter out cargo/trucking services if total weight is light (< 5 kg) to prevent confusing tariffs
+                if ($weightGrams < 5000) {
+                    $results = array_filter($results, function ($item) {
+                        $service = strtoupper($item['service'] ?? '');
+                        $description = strtolower($item['description'] ?? '');
+                        
+                        $isCargo = str_contains($service, 'JTR') || 
+                                   str_contains($service, 'GOKIL') || 
+                                   str_contains($service, 'CARGO') || 
+                                   str_contains($service, 'KARGO') || 
+                                   str_contains($service, 'TRUCKING') ||
+                                   str_contains($description, 'trucking') ||
+                                   str_contains($description, 'cargo') ||
+                                   str_contains($description, 'kargo');
+
+                        return ! $isCargo;
+                    });
+
+                    $results = array_values($results);
+                }
+
                 return $results;
             } catch (\Exception $e) {
                 Log::error('RajaOngkir API error: ' . $e->getMessage());

@@ -7,33 +7,40 @@
     </div>
 
     {{-- Brutalist Filter Tabs --}}
-    <div class="flex flex-wrap gap-2 border-b-2 border-white/10 pb-4">
-        <button wire:click="$set('filterStatus', '')" 
-                class="px-4 py-2 text-xs font-bold uppercase tracking-wider border-2 transition-all duration-150 {{ $filterStatus === '' ? 'border-violet-600 bg-violet-950/20 text-white' : 'border-white/10 bg-transparent text-zinc-400 hover:text-white hover:border-white/30' }}">
+    <div class="flex flex-wrap gap-2 border-b-2 border-white/10 pb-4" x-data="{ activeStatus: $wire.entangle('filterStatus') }">
+        <button wire:click="$set('filterStatus', '')" @click="activeStatus = ''"
+                :class="activeStatus === '' ? 'border-violet-600 bg-violet-950/20 text-white' : 'border-white/10 bg-transparent text-zinc-400 hover:text-white hover:border-white/30'"
+                class="px-4 py-2 text-xs font-bold uppercase tracking-wider border-2 transition-all duration-100">
             Semua
         </button>
-        <button wire:click="$set('filterStatus', 'pending_payment')" 
-                class="px-4 py-2 text-xs font-bold uppercase tracking-wider border-2 transition-all duration-150 {{ $filterStatus === 'pending_payment' ? 'border-yellow-500 bg-yellow-500/10 text-yellow-400' : 'border-white/10 bg-transparent text-zinc-400 hover:text-white hover:border-white/30' }}">
+        <button wire:click="$set('filterStatus', 'pending_payment')" @click="activeStatus = 'pending_payment'"
+                :class="activeStatus === 'pending_payment' ? 'border-yellow-500 bg-yellow-500/10 text-yellow-400' : 'border-white/10 bg-transparent text-zinc-400 hover:text-white hover:border-white/30'"
+                class="px-4 py-2 text-xs font-bold uppercase tracking-wider border-2 transition-all duration-100">
             Menunggu Pembayaran
         </button>
-        <button wire:click="$set('filterStatus', 'paid')" 
-                class="px-4 py-2 text-xs font-bold uppercase tracking-wider border-2 transition-all duration-150 {{ $filterStatus === 'paid' ? 'border-blue-500 bg-blue-500/10 text-blue-400' : 'border-white/10 bg-transparent text-zinc-400 hover:text-white hover:border-white/30' }}">
+        <button wire:click="$set('filterStatus', 'paid')" @click="activeStatus = 'paid'"
+                :class="activeStatus === 'paid' ? 'border-blue-500 bg-blue-500/10 text-blue-400' : 'border-white/10 bg-transparent text-zinc-400 hover:text-white hover:border-white/30'"
+                class="px-4 py-2 text-xs font-bold uppercase tracking-wider border-2 transition-all duration-100">
             Dibayar
         </button>
-        <button wire:click="$set('filterStatus', 'processing')" 
-                class="px-4 py-2 text-xs font-bold uppercase tracking-wider border-2 transition-all duration-150 {{ $filterStatus === 'processing' ? 'border-indigo-500 bg-indigo-500/10 text-indigo-400' : 'border-white/10 bg-transparent text-zinc-400 hover:text-white hover:border-white/30' }}">
+        <button wire:click="$set('filterStatus', 'processing')" @click="activeStatus = 'processing'"
+                :class="activeStatus === 'processing' ? 'border-indigo-500 bg-indigo-500/10 text-indigo-400' : 'border-white/10 bg-transparent text-zinc-400 hover:text-white hover:border-white/30'"
+                class="px-4 py-2 text-xs font-bold uppercase tracking-wider border-2 transition-all duration-100">
             Diproses
         </button>
-        <button wire:click="$set('filterStatus', 'shipped')" 
-                class="px-4 py-2 text-xs font-bold uppercase tracking-wider border-2 transition-all duration-150 {{ $filterStatus === 'shipped' ? 'border-cyan-500 bg-cyan-500/10 text-cyan-400' : 'border-white/10 bg-transparent text-zinc-400 hover:text-white hover:border-white/30' }}">
+        <button wire:click="$set('filterStatus', 'shipped')" @click="activeStatus = 'shipped'"
+                :class="activeStatus === 'shipped' ? 'border-cyan-500 bg-cyan-500/10 text-cyan-400' : 'border-white/10 bg-transparent text-zinc-400 hover:text-white hover:border-white/30'"
+                class="px-4 py-2 text-xs font-bold uppercase tracking-wider border-2 transition-all duration-100">
             Dikirim
         </button>
-        <button wire:click="$set('filterStatus', 'completed')" 
-                class="px-4 py-2 text-xs font-bold uppercase tracking-wider border-2 transition-all duration-150 {{ $filterStatus === 'completed' ? 'border-green-500 bg-green-500/10 text-green-400' : 'border-white/10 bg-transparent text-zinc-400 hover:text-white hover:border-white/30' }}">
+        <button wire:click="$set('filterStatus', 'completed')" @click="activeStatus = 'completed'"
+                :class="activeStatus === 'completed' ? 'border-green-500 bg-green-500/10 text-green-400' : 'border-white/10 bg-transparent text-zinc-400 hover:text-white hover:border-white/30'"
+                class="px-4 py-2 text-xs font-bold uppercase tracking-wider border-2 transition-all duration-100">
             Selesai
         </button>
-        <button wire:click="$set('filterStatus', 'cancelled')" 
-                class="px-4 py-2 text-xs font-bold uppercase tracking-wider border-2 transition-all duration-150 {{ $filterStatus === 'cancelled' ? 'border-red-500 bg-red-500/10 text-red-400' : 'border-white/10 bg-transparent text-zinc-400 hover:text-white hover:border-white/30' }}">
+        <button wire:click="$set('filterStatus', 'cancelled')" @click="activeStatus = 'cancelled'"
+                :class="activeStatus === 'cancelled' ? 'border-red-500 bg-red-500/10 text-red-400' : 'border-white/10 bg-transparent text-zinc-400 hover:text-white hover:border-white/30'"
+                class="px-4 py-2 text-xs font-bold uppercase tracking-wider border-2 transition-all duration-100">
             Dibatalkan
         </button>
     </div>

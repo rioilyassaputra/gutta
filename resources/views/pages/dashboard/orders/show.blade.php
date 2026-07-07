@@ -22,12 +22,13 @@
             {{-- Payment actions if pending payment --}}
             @if($order->status === 'pending_payment' && $order->payment_token)
                 <div class="flex flex-col items-stretch md:items-end gap-2">
-                    <button id="pay-button" class="btn-primary py-3 px-8 text-sm">
-                        Bayar Sekarang
-                    </button>
-                    <p class="text-xs text-zinc-500 text-center md:text-right">Selesaikan pembayaran via Midtrans Snap</p>
+                    <a href="{{ $order->payment_token }}" target="_blank" rel="noopener noreferrer" class="btn-primary py-3 px-8 text-sm text-center">
+                        Bayar Sekarang (Pakasir)
+                    </a>
+                    <p class="text-xs text-zinc-500 text-center md:text-right">Selesaikan pembayaran via QRIS / VA Pakasir</p>
                 </div>
             @endif
+
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
@@ -115,32 +116,5 @@
         </div>
     </div>
 
-    {{-- Midtrans Snap Trigger Script --}}
-    @if($order->status === 'pending_payment' && $order->payment_token)
-        @push('scripts')
-            <script>
-                document.getElementById('pay-button')?.addEventListener('click', function() {
-                    if (typeof snap !== 'undefined') {
-                        snap.pay('{{ explode('|', $order->payment_token)[0] }}', {
-                            onSuccess: function(result) {
-                                window.location.reload();
-                            },
-                            onPending: function(result) {
-                                window.location.reload();
-                            },
-                            onError: function(result) {
-                                alert('Pembayaran gagal, silakan coba lagi.');
-                                window.location.reload();
-                            },
-                            onClose: function() {
-                                window.location.reload();
-                            }
-                        });
-                    } else {
-                        alert('Sistem pembayaran sedang tidak siap, silakan coba sesaat lagi.');
-                    }
-                });
-            </script>
-        @endpush
-    @endif
 </x-app-layout>
+

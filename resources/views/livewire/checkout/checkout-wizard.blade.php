@@ -1,32 +1,5 @@
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12"
-     x-data="{
-        initSnap() {
-            window.addEventListener('open-snap', event => {
-                const token = event.detail.token;
-                const orderId = event.detail.orderId;
-                if (typeof snap !== 'undefined') {
-                    snap.pay(token, {
-                        onSuccess: function(result) {
-                            window.location.href = '/orders/' + orderId;
-                        },
-                        onPending: function(result) {
-                            window.location.href = '/orders/' + orderId;
-                        },
-                        onError: function(result) {
-                            alert('Pembayaran gagal, silakan coba lagi.');
-                            window.location.href = '/orders/' + orderId;
-                        },
-                        onClose: function() {
-                            window.location.href = '/orders/' + orderId;
-                        }
-                    });
-                } else {
-                    alert('Sistem pembayaran sedang tidak siap, silakan coba sesaat lagi.');
-                }
-            });
-        }
-     }"
-     x-init="initSnap()">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
 
     {{-- Progress Steps Bar --}}
     <div class="mb-12 border-b-2 border-white/10 pb-6 flex items-center justify-between">
@@ -93,8 +66,20 @@
                         </div>
 
                         <div class="flex justify-end pt-4">
-                            <button wire:click="goToShipping" class="btn-primary" {{ !$selectedAddressId ? 'disabled' : '' }}>
-                                Lanjutkan ke Pengiriman
+                            <button wire:click="goToShipping" 
+                                    wire:loading.attr="disabled"
+                                    wire:target="goToShipping"
+                                    class="btn-primary" {{ !$selectedAddressId ? 'disabled' : '' }}>
+                                <span wire:loading.remove wire:target="goToShipping" class="inline-flex items-center gap-2">
+                                    Lanjutkan ke Pengiriman
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                    </svg>
+                                </span>
+                                <span wire:loading.inline-flex wire:target="goToShipping" class="items-center gap-2">
+                                    <div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                    Menghitung Ongkir...
+                                </span>
                             </button>
                         </div>
                     @endif
@@ -124,14 +109,17 @@
                             <button wire:click="loadShippingOptions" class="btn-secondary mt-4">Coba Lagi</button>
                         </div>
                     @else
-                        <div class="grid grid-cols-1 gap-4">
+                        <div class="grid grid-cols-1 gap-4" x-data="{ activeCourier: $wire.entangle('selectedCourier'), activeService: $wire.entangle('selectedCourierService') }">
                             @foreach($shippingOptions as $opt)
                                 @php
-                                    $isSelected = ($selectedCourier === $opt['courier'] && $selectedCourierService === $opt['service']);
+                                    $cKey = $opt['courier'];
+                                    $sKey = $opt['service'];
                                 @endphp
                                 <button type="button" 
                                         wire:click="selectShipping('{{ $opt['courier'] }}', '{{ $opt['service'] }}', {{ $opt['cost'] }}, '{{ $opt['courier_name'] }}')" 
-                                        class="block w-full text-left border-2 cursor-pointer transition-all duration-150 p-6 {{ $isSelected ? 'border-violet-600 bg-violet-950/20' : 'border-white/10 bg-zinc-950 hover:border-white/30' }}">
+                                        @click="activeCourier = '{{ $cKey }}'; activeService = '{{ $sKey }}'"
+                                        :class="(activeCourier === '{{ $cKey }}' && activeService === '{{ $sKey }}') ? 'border-violet-600 bg-violet-950/20 shadow-[0_0_15px_rgba(109,40,217,0.3)]' : 'border-white/10 bg-zinc-950 hover:border-white/30'"
+                                        class="block w-full text-left border-2 cursor-pointer transition-all duration-100 p-6 relative">
                                     <div class="flex items-center justify-between">
                                         <div>
                                             <div class="flex items-center gap-2 mb-1">
@@ -144,8 +132,11 @@
                                             <p class="text-zinc-400 text-xs">{{ $opt['description'] }}</p>
                                             <p class="text-zinc-500 text-xs mt-1">Estimasi pengiriman: {{ $opt['etd'] }} hari</p>
                                         </div>
-                                        <div class="text-right">
+                                        <div class="text-right flex items-center gap-3">
                                             <p class="font-black text-white text-base">Rp {{ number_format($opt['cost'], 0, ',', '.') }}</p>
+                                            <div x-show="activeCourier === '{{ $cKey }}' && activeService === '{{ $sKey }}'" class="w-5 h-5 rounded-full bg-violet-600 flex items-center justify-center text-white text-xs font-bold">
+                                                ✓
+                                            </div>
                                         </div>
                                     </div>
                                 </button>
@@ -153,8 +144,20 @@
                         </div>
 
                         <div class="flex justify-end pt-4">
-                            <button wire:click="goToConfirmation" class="btn-primary" {{ !$selectedCourier ? 'disabled' : '' }}>
-                                Lanjutkan ke Pembayaran
+                            <button wire:click="goToConfirmation" 
+                                    wire:loading.attr="disabled"
+                                    wire:target="goToConfirmation"
+                                    class="btn-primary" {{ !$selectedCourier ? 'disabled' : '' }}>
+                                <span wire:loading.remove wire:target="goToConfirmation" class="inline-flex items-center gap-2">
+                                    Lanjutkan ke Pembayaran
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                    </svg>
+                                </span>
+                                <span wire:loading.inline-flex wire:target="goToConfirmation" class="items-center gap-2">
+                                    <div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                    Memproses...
+                                </span>
                             </button>
                         </div>
                     @endif
@@ -199,9 +202,15 @@
                     <div class="flex justify-end pt-4">
                         <button wire:click="createOrder" 
                                 wire:loading.attr="disabled"
+                                wire:target="createOrder"
                                 class="btn-primary w-full sm:w-auto text-base py-4 px-8">
-                            <span wire:loading.remove>Bayar Sekarang via Midtrans</span>
-                            <span wire:loading>Memproses Transaksi...</span>
+                            <span wire:loading.remove wire:target="createOrder" class="inline-flex items-center gap-2">
+                                Bayar Sekarang via Pakasir (QRIS / VA)
+                            </span>
+                            <span wire:loading.inline-flex wire:target="createOrder" class="items-center gap-2">
+                                <div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                Memproses Transaksi...
+                            </span>
                         </button>
                     </div>
                 </div>

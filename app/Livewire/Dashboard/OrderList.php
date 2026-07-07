@@ -21,6 +21,25 @@ class OrderList extends Component
         $this->resetPage();
     }
 
+    public function mount(
+        \App\Services\PaymentServiceInterface $paymentService,
+        \App\Services\OrderService $orderService
+    ): void {
+        // Auto-check pending payment status ONCE on component mount
+        $pendingOrders = Order::where('user_id', auth()->id())
+            ->where('status', 'pending_payment')
+            ->get();
+
+        foreach ($pendingOrders as $pendingOrder) {
+            if (method_exists($paymentService, 'getTransactionStatus')) {
+                $status = $paymentService->getTransactionStatus($pendingOrder);
+                if (in_array(strtolower($status ?? ''), ['completed', 'paid', 'settlement', 'success'])) {
+                    $orderService->markAsPaid($pendingOrder);
+                }
+            }
+        }
+    }
+
     public function render()
     {
         $query = Order::where('user_id', auth()->id())

@@ -39,41 +39,48 @@ new class extends Component
 }; ?>
 
 <section>
-    <header>
-        <h2 class="text-lg font-medium text-gray-900">
-            {{ __('Update Password') }}
+    <header class="mb-6">
+        <h2 class="text-lg font-black uppercase tracking-wider text-violet-400">
+            {{ __('Ubah Kata Sandi') }}
         </h2>
-
-        <p class="mt-1 text-sm text-gray-600">
-            {{ __('Ensure your account is using a long, random password to stay secure.') }}
+        <p class="mt-1 text-xs text-zinc-400">
+            {{ __('Pastikan akun Anda menggunakan kata sandi yang kuat untuk menjaga keamanan.') }}
         </p>
     </header>
 
-    <form wire:submit="updatePassword" class="mt-6 space-y-6">
+    <form wire:submit="updatePassword" class="space-y-6">
         <div>
-            <x-input-label for="update_password_current_password" :value="__('Current Password')" />
-            <x-text-input wire:model="current_password" id="update_password_current_password" name="current_password" type="password" class="mt-1 block w-full" autocomplete="current-password" />
-            <x-input-error :messages="$errors->get('current_password')" class="mt-2" />
+            <label for="update_password_current_password" class="label-gutta">Kata Sandi Saat Ini <span class="text-red-500">*</span></label>
+            <input wire:model="current_password" id="update_password_current_password" type="password" class="input-gutta" autocomplete="current-password" />
+            @error('current_password')
+                <p class="text-red-400 text-xs mt-1 font-bold">{{ $message }}</p>
+            @enderror
         </div>
 
         <div>
-            <x-input-label for="update_password_password" :value="__('New Password')" />
-            <x-text-input wire:model="password" id="update_password_password" name="password" type="password" class="mt-1 block w-full" autocomplete="new-password" />
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
+            <label for="update_password_password" class="label-gutta">Kata Sandi Baru <span class="text-red-500">*</span></label>
+            <input wire:model="password" id="update_password_password" type="password" class="input-gutta" autocomplete="new-password" />
+            @error('password')
+                <p class="text-red-400 text-xs mt-1 font-bold">{{ $message }}</p>
+            @enderror
         </div>
 
         <div>
-            <x-input-label for="update_password_password_confirmation" :value="__('Confirm Password')" />
-            <x-text-input wire:model="password_confirmation" id="update_password_password_confirmation" name="password_confirmation" type="password" class="mt-1 block w-full" autocomplete="new-password" />
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
+            <label for="update_password_password_confirmation" class="label-gutta">Konfirmasi Kata Sandi Baru <span class="text-red-500">*</span></label>
+            <input wire:model="password_confirmation" id="update_password_password_confirmation" type="password" class="input-gutta" autocomplete="new-password" />
+            @error('password_confirmation')
+                <p class="text-red-400 text-xs mt-1 font-bold">{{ $message }}</p>
+            @enderror
         </div>
 
-        <div class="flex items-center gap-4">
-            <x-primary-button>{{ __('Save') }}</x-primary-button>
+        <div class="flex items-center gap-4 pt-2">
+            <button type="submit" class="btn-primary">
+                {{ __('Perbarui Kata Sandi') }}
+            </button>
 
-            <x-action-message class="me-3" on="password-updated">
-                {{ __('Saved.') }}
-            </x-action-message>
+            <span x-data="{ show: false }" x-on:password-updated.window="show = true; setTimeout(() => show = false, 3000)" x-show="show" x-cloak class="text-xs font-bold text-green-400 flex items-center gap-1">
+                ✓ {{ __('Kata sandi berhasil diperbarui.') }}
+            </span>
         </div>
     </form>
 </section>

@@ -89,7 +89,7 @@ class CheckoutWizard extends Component
     }
 
     // ── Step 3: Payment ──────────────────────────────────────────────────
-    public function createOrder(OrderService $orderService, MidtransPaymentService $paymentService): void
+    public function createOrder(OrderService $orderService, \App\Services\PaymentServiceInterface $paymentService)
     {
         $address = Address::findOrFail($this->selectedAddressId);
 
@@ -102,10 +102,11 @@ class CheckoutWizard extends Component
 
             $result = $paymentService->createTransaction($order);
 
-            if ($result['success']) {
-                $this->snapToken = $result['snap_token'];
-                $order->update(['payment_token' => $this->snapToken . '|' . $result['unique_order_id']]);
-                $this->dispatch('open-snap', token: $this->snapToken, orderId: $order->order_number);
+            if (!empty($result['success']) && !empty($result['payment_url'])) {
+                $paymentUrl = $result['payment_url'];
+                $order->update(['payment_token' => $paymentUrl]);
+
+                return $this->redirect($paymentUrl, navigate: false);
             } else {
                 $this->dispatch('notify', message: 'Gagal membuat transaksi pembayaran. Coba lagi.', type: 'error');
             }
@@ -113,6 +114,7 @@ class CheckoutWizard extends Component
             $this->dispatch('notify', message: $e->getMessage(), type: 'error');
         }
     }
+
 
     public function backToStep(int $step): void
     {

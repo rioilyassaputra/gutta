@@ -32,7 +32,8 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
-    Route::get('/orders/{order:order_number}', [OrderController::class, 'show'])->name('orders.show');
+    Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+
 });
 
 // Profile route dari Breeze
@@ -51,9 +52,14 @@ Route::prefix('gutta-manage')->name('admin.')->middleware(['auth', 'admin'])->gr
     Route::get('customers/export', [Admin\CustomerController::class, 'export'])->name('customers.export');
 });
 
-// ── WEBHOOK (publik tapi diverifikasi signature) ───────────────────────────
+// ── WEBHOOK (publik tapi diverifikasi) ─────────────────────────────────────
+Route::post('/webhooks/pakasir', [WebhookController::class, 'pakasir'])
+    ->name('webhooks.pakasir')
+    ->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class]);
+
 Route::post('/webhooks/midtrans', [WebhookController::class, 'midtrans'])
     ->name('webhooks.midtrans')
     ->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class]);
 
 require __DIR__.'/auth.php';
+

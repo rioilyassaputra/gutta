@@ -234,3 +234,16 @@
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }
+
+/* ── Livewire Loading Directives Fix ────────────────────────────────────── */
+[wire\:loading]:not([wire\:loading\.remove]),
+[wire\:loading\.delay]:not([wire\:loading\.remove]),
+[wire\:loading\.inline-block]:not([wire\:loading\.remove]),
+[wire\:loading\.inline]:not([wire\:loading\.remove]),
+[wire\:loading\.block]:not([wire\:loading\.remove]),
+[wire\:loading\.flex]:not([wire\:loading\.remove]),
+[wire\:loading\.table]:not([wire\:loading\.remove]),
+[wire\:loading\.grid]:not([wire\:loading\.remove]) {
+  display: none !important;
+}
+

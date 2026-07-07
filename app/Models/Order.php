@@ -127,4 +127,12 @@ class Order extends Model
     {
         return 'order_number';
     }
+
+    public function resolveRouteBinding($value, $field = null)
+    {
+        return $this->where('order_number', $value)
+            ->orWhere('id', $value)
+            ->firstOrFail();
+    }
 }
+
